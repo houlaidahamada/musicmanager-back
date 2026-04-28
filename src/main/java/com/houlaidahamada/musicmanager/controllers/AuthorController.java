@@ -14,22 +14,22 @@ public class AuthorController {
     private AuthorRepository authorRepository;
 
     @GetMapping
-    public List<Author> getAllSongs(){
+    public List<Author> getAllAuthors(){
         return authorRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public Author getSong(@PathVariable Long id){
+    public Author getAuthor(@PathVariable Long id){
         return authorRepository.findById(id).orElse(null);
     }
 
     @PostMapping
-    public Author createSong(@RequestBody Author author){
+    public Author createAuthor(@RequestBody Author author){
         return authorRepository.save(author);
     }
 
     @PutMapping("/{id}")
-    public Author updateSong(@PathVariable Long id, @RequestBody Author authorDetails){
+    public Author updateAuthor(@PathVariable Long id, @RequestBody Author authorDetails){
         Author author = authorRepository.findById(id).orElse(null);
         if(author != null) {
             author.setFullName(authorDetails.getFullName());
@@ -40,7 +40,7 @@ public class AuthorController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSong(@PathVariable Long id){
+    public void deleteAuthor(@PathVariable Long id){
         authorRepository.deleteById(id);
     }
 
