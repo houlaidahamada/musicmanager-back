@@ -1,5 +1,6 @@
-package com.houlaidahamada.musicmanager.entities;
+package com.houlaidahamada.musicmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,14 +26,10 @@ public class Song {
             joinColumns = @JoinColumn(name = "song_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
+    @JsonManagedReference
     private Set<Author> authors = new HashSet<>();
 
     public Song() {}
-
-    public Song(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
 
     public Long getId() {
         return id;
@@ -40,16 +37,6 @@ public class Song {
 
     public Set<Author> getAuthors() {
         return authors;
-    }
-
-    public void addAuthor(Author author) {
-        this.authors.add(author);
-        author.getSongs().add(this);
-    }
-
-    public void removeAuthor(Author author) {
-        this.authors.remove(author);
-        author.getSongs().remove(this);
     }
 
     public String getTitle() {
