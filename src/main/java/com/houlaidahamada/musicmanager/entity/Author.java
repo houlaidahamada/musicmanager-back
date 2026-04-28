@@ -1,5 +1,6 @@
-package com.houlaidahamada.musicmanager.entities;
+package com.houlaidahamada.musicmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,14 +19,10 @@ public class Author {
     private String biography;
 
     @ManyToMany(mappedBy = "authors")
+    @JsonBackReference
     private Set<Song> songs = new HashSet<>();
 
     public Author() {}
-
-    public Author(String fullName, String biography) {
-        this.fullName = fullName;
-        this.biography = biography;
-    }
 
     public Long getId() {
         return id;
@@ -49,15 +46,5 @@ public class Author {
 
     public Set<Song> getSongs() {
         return songs;
-    }
-
-    public void addSong(Song song) {
-        this.songs.add(song);
-        song.getAuthors().add(this);
-    }
-
-    public void removeSong(Song song) {
-        this.songs.remove(song);
-        song.getAuthors().remove(this);
     }
 }

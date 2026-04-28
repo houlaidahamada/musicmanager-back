@@ -1,6 +1,6 @@
-package com.houlaidahamada.musicmanager.repositories;
+package com.houlaidahamada.musicmanager.repository;
 
-import com.houlaidahamada.musicmanager.entities.Author;
+import com.houlaidahamada.musicmanager.entity.Author;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
