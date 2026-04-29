@@ -1,8 +1,8 @@
-package com.houlaidahamada.musicmanager.dto;
+package com.houlaidahamada.musicmanager.dto.author;
 
 import java.util.List;
 
-public class AuthorDTO {
+public class AuthorResponseDto {
     private Long id;
     private String fullName;
     private String biography;

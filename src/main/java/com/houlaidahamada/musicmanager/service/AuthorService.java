@@ -1,8 +1,10 @@
 package com.houlaidahamada.musicmanager.service;
 
-import com.houlaidahamada.musicmanager.dto.AuthorDTO;
+import com.houlaidahamada.musicmanager.dto.author.AuthorCreateDto;
+import com.houlaidahamada.musicmanager.dto.author.AuthorResponseDto;
+import com.houlaidahamada.musicmanager.dto.author.AuthorUpdateDto;
 import com.houlaidahamada.musicmanager.entity.Author;
-import com.houlaidahamada.musicmanager.entity.Song;
+import com.houlaidahamada.musicmanager.mapper.AuthorMapper;
 import com.houlaidahamada.musicmanager.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,51 +14,53 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
-    public AuthorService(AuthorRepository authorRepository) {
+    public AuthorService(AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.authorRepository = authorRepository;
+        this.authorMapper = authorMapper;
     }
 
     // -------------------------
     // GET ALL
     // -------------------------
-    public List<AuthorDTO> getAllAuthors() {
+    public List<AuthorResponseDto> getAllAuthors() {
         return authorRepository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(authorMapper::toDto)
                 .toList();
     }
 
     // -------------------------
     // GET BY ID
     // -------------------------
-    public AuthorDTO getAuthorById(Long id) {
+    public AuthorResponseDto getAuthorById(Long id) {
         Author author = authorRepository.findById(id).orElseThrow();
-        return toDTO(author);
+        return authorMapper.toDto(author);
     }
 
     // -------------------------
     // CREATE
     // -------------------------
-    public AuthorDTO createAuthor(AuthorDTO dto) {
+    public AuthorResponseDto createAuthor(AuthorCreateDto dto) {
         Author author = new Author();
 
         author.setFullName(dto.getFullName());
         author.setBiography(dto.getBiography());
 
-        return toDTO(authorRepository.save(author));
+        return authorMapper.toDto(authorRepository.save(author));
     }
 
     // -------------------------
     // UPDATE
     // -------------------------
-    public AuthorDTO updateAuthor(Long id, AuthorDTO dto) {
+    public AuthorResponseDto updateAuthor(Long id, AuthorUpdateDto dto) {
         Author author = authorRepository.findById(id).orElseThrow();
 
         author.setFullName(dto.getFullName());
         author.setBiography(dto.getBiography());
 
-        return toDTO(authorRepository.save(author));
+        return authorMapper.toDto(authorRepository.save(author));
     }
 
     // -------------------------
@@ -70,34 +74,14 @@ public class AuthorService {
     // -------------------------
     // SEARCH
     // -------------------------
-    public List<AuthorDTO> searchAuthors(String keyword) {
+    public List<AuthorResponseDto> searchAuthors(String keyword) {
         if (keyword == null || keyword.isBlank()) {
             return List.of();
         }
 
         return authorRepository.findByFullNameContainingIgnoreCase(keyword)
                 .stream()
-                .map(this::toDTO)
+                .map(authorMapper::toDto)
                 .toList();
-    }
-
-    // -------------------------
-    // ENTITY → DTO
-    // -------------------------
-    private AuthorDTO toDTO(Author author) {
-        AuthorDTO dto = new AuthorDTO();
-
-        dto.setId(author.getId());
-        dto.setFullName(author.getFullName());
-        dto.setBiography(author.getBiography());
-
-        List<Long> songIds = author.getSongs()
-                .stream()
-                .map(Song::getId)
-                .toList();
-
-        dto.setSongIds(songIds);
-
-        return dto;
     }
 }

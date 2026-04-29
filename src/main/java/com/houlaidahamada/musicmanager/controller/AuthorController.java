@@ -1,6 +1,8 @@
 package com.houlaidahamada.musicmanager.controller;
 
-import com.houlaidahamada.musicmanager.dto.AuthorDTO;
+import com.houlaidahamada.musicmanager.dto.author.AuthorCreateDto;
+import com.houlaidahamada.musicmanager.dto.author.AuthorResponseDto;
+import com.houlaidahamada.musicmanager.dto.author.AuthorUpdateDto;
 import com.houlaidahamada.musicmanager.service.AuthorService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +19,22 @@ public class AuthorController {
     }
 
     @GetMapping
-    public List<AuthorDTO> getAllAuthors() {
+    public List<AuthorResponseDto> getAllAuthors() {
         return authorService.getAllAuthors();
     }
 
     @GetMapping("/{id}")
-    public AuthorDTO getAuthor(@PathVariable Long id) {
+    public AuthorResponseDto getAuthor(@PathVariable Long id) {
         return authorService.getAuthorById(id);
     }
 
     @PostMapping
-    public AuthorDTO createAuthor(@RequestBody AuthorDTO dto) {
+    public AuthorResponseDto createAuthor(@RequestBody AuthorCreateDto dto) {
         return authorService.createAuthor(dto);
     }
 
     @PutMapping("/{id}")
-    public AuthorDTO updateAuthor(@PathVariable Long id, @RequestBody AuthorDTO dto) {
+    public AuthorResponseDto updateAuthor(@PathVariable Long id, @RequestBody AuthorUpdateDto dto) {
         return authorService.updateAuthor(id, dto);
     }
 
@@ -42,7 +44,7 @@ public class AuthorController {
     }
 
     @GetMapping("/search")
-    public List<AuthorDTO> searchAuthors(@RequestParam String keyword) {
+    public List<AuthorResponseDto> searchAuthors(@RequestParam String keyword) {
         return authorService.searchAuthors(keyword);
     }
 }
