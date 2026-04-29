@@ -1,7 +1,8 @@
 package com.houlaidahamada.musicmanager.controller;
 
-import com.houlaidahamada.musicmanager.dto.AuthorDTO;
-import com.houlaidahamada.musicmanager.dto.SongDTO;
+import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
+import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
+import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.service.SongService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,32 +19,32 @@ public class SongController {
     }
 
     @GetMapping
-    public List<SongDTO> getAllSongs() {
+    public List<SongResponseDto> getAllSongs() {
         return songService.getAllSongs();
     }
 
     @GetMapping("/{id}")
-    public SongDTO getSong(@PathVariable Long id){
+    public SongResponseDto getSong(@PathVariable Long id){
         return songService.getSongById(id);
     }
 
     @PostMapping
-    public SongDTO createSong(@RequestBody SongDTO songDTO){
-        return songService.createSong(songDTO);
+    public SongResponseDto createSong(@RequestBody SongCreateDto songCreateDto){
+        return songService.createSong(songCreateDto);
     }
 
     @PutMapping("/{id}")
-    public SongDTO updateSong(@PathVariable Long id, @RequestBody SongDTO songDTO){
-        return songService.updateSong(id, songDTO);
+    public SongResponseDto updateSong(@PathVariable Long id, @RequestBody SongUpdateDto songUpdateDto){
+        return songService.updateSong(id, songUpdateDto);
     }
 
     @PostMapping("/{songId}/authors/{authorId}")
-    public SongDTO addAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
+    public SongResponseDto addAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
         return songService.addAuthorToSong(songId, authorId);
     }
 
     @DeleteMapping("/{songId}/authors/{authorId}")
-    public SongDTO removeAuthorFromSong(@PathVariable Long songId, @PathVariable Long authorId) {
+    public SongResponseDto removeAuthorFromSong(@PathVariable Long songId, @PathVariable Long authorId) {
         return songService.removeAuthorFromSong(songId, authorId);
     }
 
@@ -53,12 +54,12 @@ public class SongController {
     }
 
     @GetMapping("/completed")
-    public List<SongDTO> getCompletedSongs() {
+    public List<SongResponseDto> getCompletedSongs() {
         return songService.getCompletedSongs();
     }
 
     @GetMapping("/search")
-    public List<SongDTO> searchSongs(@RequestParam String keyword) {
+    public List<SongResponseDto> searchSongs(@RequestParam String keyword) {
         return songService.searchSongs(keyword);
     }
 }

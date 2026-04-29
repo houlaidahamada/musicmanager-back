@@ -1,8 +1,8 @@
-package com.houlaidahamada.musicmanager.dto;
+package com.houlaidahamada.musicmanager.dto.song;
 
 import java.util.List;
 
-public class SongDTO {
+public class SongResponseDto {
     private Long id;
     private String title;
     private String description;
