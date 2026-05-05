@@ -1,13 +1,13 @@
 package com.houlaidahamada.musicmanager.repository;
 
 import com.houlaidahamada.musicmanager.entity.Song;
+import com.houlaidahamada.musicmanager.entity.Song.SongStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
-  List<Song> findByCompleted(boolean completed);
-  List<Song> findByTitleContainingIgnoreCase(String keyword);
+    List<Song> findByArtistProfileId(Long profileId);
+    List<Song> findByProjectId(Long projectId);
+    List<Song> findByStatus(SongStatus status);
 }

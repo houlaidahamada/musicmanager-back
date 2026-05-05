@@ -1,12 +1,14 @@
 package com.houlaidahamada.musicmanager.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "songs")
+@Data
 public class Song {
 
     @Id
@@ -18,48 +20,59 @@ public class Song {
 
     private String description;
 
-    private boolean completed = false;
+    @Enumerated(EnumType.STRING)
+    private SongStatus status = SongStatus.DRAFT;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artist_profile_id")
+    private ArtistProfile artistProfile;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    private Double duration;
+
+    @OneToOne(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Lyrics lyrics;
 
     @ManyToMany
     @JoinTable(
-            name = "song_author",
+            name = "song_authors",
             joinColumns = @JoinColumn(name = "song_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    @JsonManagedReference
     private Set<Author> authors = new HashSet<>();
 
-    public Song() {}
+    @ManyToMany
+    @JoinTable(
+            name = "song_themes",
+            joinColumns = @JoinColumn(name = "song_id"),
+            inverseJoinColumns = @JoinColumn(name = "theme_id")
+    )
+    private Set<Theme> themes = new HashSet<>();
 
-    public Long getId() {
-        return id;
+    @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Reference> references = new HashSet<>();
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-    public Set<Author> getAuthors() {
-        return authors;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public enum SongStatus {
+        DRAFT, IN_PROGRESS, COMPLETED, ARCHIVED
     }
 }

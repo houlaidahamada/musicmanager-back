@@ -1,52 +1,23 @@
 package com.houlaidahamada.musicmanager.dto.song;
 
-import java.util.List;
+import com.houlaidahamada.musicmanager.entity.Song;
+import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.Set;
 
+@Data
 public class SongResponseDto {
+
     private Long id;
     private String title;
     private String description;
-    private boolean completed;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<String> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<String> authors) {
-        this.authors = authors;
-    }
-
-    private List<String> authors;
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    public boolean isCompleted() {
-        return this.completed;
+    private Song.SongStatus status;
+    private Double duration;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Set<String> authors;
+    private Set<String> themes;
+    private String lyrics;
+}
     }
 }
