@@ -6,9 +6,13 @@ import lombok.Data;
 @Data
 public class UserLoginDto {
 
-    @NotBlank
     private String username;
+    private String email;
 
     @NotBlank
     private String password;
+
+    public boolean hasCredential() {
+        return (username != null && !username.isBlank()) || (email != null && !email.isBlank());
+    }
 }
