@@ -29,7 +29,7 @@ public class AuthenticationService {
         this.userMapper = userMapper;
     }
 
-    public String register(UserRegisterDto registerDto) {
+    public AuthResponseDto register(UserRegisterDto registerDto) {
         // Check if username already exists
         if (userRepository.findByUsername(registerDto.getUsername()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists");
@@ -49,11 +49,14 @@ public class AuthenticationService {
         // Save the user
         User savedUser = userRepository.save(user);
 
-        // Generate and return JWT token
-        return jwtTokenProvider.createToken(savedUser.getUsername(), savedUser.getEmail(), savedUser.getId());
+        // Generate tokens
+        String token = jwtTokenProvider.createToken(savedUser.getUsername(), savedUser.getEmail(), savedUser.getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(savedUser.getUsername());
+
+        return new AuthResponseDto(token, refreshToken);
     }
 
-    public String login(UserLoginDto loginDto) {
+    public AuthResponseDto login(UserLoginDto loginDto) {
         if (loginDto == null || !loginDto.hasCredential()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username or email is required");
         }
@@ -66,6 +69,29 @@ public class AuthenticationService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        return jwtTokenProvider.createToken(user.getUsername(), user.getEmail(), user.getId());
+        String token = jwtTokenProvider.createToken(user.getUsername(), user.getEmail(), user.getId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getUsername());
+
+        return new AuthResponseDto(token, refreshToken);
+    }
+
+    public AuthResponseDto refresh(String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token is required");
+        }
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+        }
+
+        String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+        String newToken = jwtTokenProvider.createToken(user.getUsername(), user.getEmail(), user.getId());
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getUsername());
+
+        return new AuthResponseDto(newToken, newRefreshToken);
     }
 }

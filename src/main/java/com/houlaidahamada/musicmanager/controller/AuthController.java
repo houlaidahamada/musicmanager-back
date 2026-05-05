@@ -1,6 +1,7 @@
 package com.houlaidahamada.musicmanager.controller;
 
 import com.houlaidahamada.musicmanager.dto.user.AuthResponseDto;
+import com.houlaidahamada.musicmanager.dto.user.RefreshTokenDto;
 import com.houlaidahamada.musicmanager.dto.user.UserLoginDto;
 import com.houlaidahamada.musicmanager.dto.user.UserRegisterDto;
 import com.houlaidahamada.musicmanager.service.AuthenticationService;
@@ -23,13 +24,19 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDto> register(@Valid @RequestBody UserRegisterDto registerDto) {
-        String token = authenticationService.register(registerDto);
-        return ResponseEntity.ok(new AuthResponseDto(token));
+        AuthResponseDto response = authenticationService.register(registerDto);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody UserLoginDto loginDto) {
-        String token = authenticationService.login(loginDto);
-        return ResponseEntity.ok(new AuthResponseDto(token));
+        AuthResponseDto response = authenticationService.login(loginDto);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponseDto> refresh(@Valid @RequestBody RefreshTokenDto refreshTokenDto) {
+        AuthResponseDto response = authenticationService.refresh(refreshTokenDto.getRefreshToken());
+        return ResponseEntity.ok(response);
     }
 }
