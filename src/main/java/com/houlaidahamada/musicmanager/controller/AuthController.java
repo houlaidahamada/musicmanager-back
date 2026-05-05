@@ -5,6 +5,7 @@ import com.houlaidahamada.musicmanager.dto.user.RefreshTokenDto;
 import com.houlaidahamada.musicmanager.dto.user.UserLoginDto;
 import com.houlaidahamada.musicmanager.dto.user.UserRegisterDto;
 import com.houlaidahamada.musicmanager.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,20 @@ public class AuthController {
     public ResponseEntity<AuthResponseDto> refresh(@Valid @RequestBody RefreshTokenDto refreshTokenDto) {
         AuthResponseDto response = authenticationService.refresh(refreshTokenDto.getRefreshToken());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String token = extractToken(request);
+        authenticationService.logout(token);
+        return ResponseEntity.ok().build();
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

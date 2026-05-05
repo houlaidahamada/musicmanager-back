@@ -1,5 +1,7 @@
 package com.houlaidahamada.musicmanager.security;
 
+import com.houlaidahamada.musicmanager.entity.InvalidatedToken;
+import com.houlaidahamada.musicmanager.repository.InvalidatedTokenRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -15,13 +17,16 @@ public class JwtTokenProvider {
     private final Key key;
     private final long expirationMillis;
     private final long refreshExpirationMillis;
+    private final InvalidatedTokenRepository invalidatedTokenRepository;
 
     public JwtTokenProvider(@Value("${jwt.secret:changeitchangeitchangeitchangeit}") String secret,
                             @Value("${jwt.expiration:3600000}") long expirationMillis,
-                            @Value("${jwt.refresh-expiration:604800000}") long refreshExpirationMillis) {
+                            @Value("${jwt.refresh-expiration:604800000}") long refreshExpirationMillis,
+                            InvalidatedTokenRepository invalidatedTokenRepository) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMillis = expirationMillis;
         this.refreshExpirationMillis = refreshExpirationMillis;
+        this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
     public String createToken(String username, String email, Long userId) {
@@ -53,7 +58,8 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            // Check if token is invalidated
+            return invalidatedTokenRepository.findByToken(token).isEmpty();
         } catch (Exception e) {
             return false;
         }
@@ -61,5 +67,13 @@ public class JwtTokenProvider {
 
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public void invalidateToken(String token) {
+        if (invalidatedTokenRepository.findByToken(token).isEmpty()) {
+            InvalidatedToken invalidatedToken = new InvalidatedToken();
+            invalidatedToken.setToken(token);
+            invalidatedTokenRepository.save(invalidatedToken);
+        }
     }
 }

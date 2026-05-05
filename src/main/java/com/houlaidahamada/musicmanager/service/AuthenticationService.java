@@ -94,4 +94,16 @@ public class AuthenticationService {
 
         return new AuthResponseDto(newToken, newRefreshToken);
     }
+
+    public void logout(String token) {
+        if (token == null || token.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is required");
+        }
+
+        if (!jwtTokenProvider.validateToken(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+        }
+
+        jwtTokenProvider.invalidateToken(token);
+    }
 }
