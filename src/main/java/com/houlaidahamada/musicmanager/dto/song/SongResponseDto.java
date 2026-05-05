@@ -19,5 +19,3 @@ public class SongResponseDto {
     private Set<String> themes;
     private String lyrics;
 }
-    }
-}
