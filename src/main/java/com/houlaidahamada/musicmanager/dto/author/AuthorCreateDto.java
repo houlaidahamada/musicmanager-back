@@ -1,14 +1,16 @@
 package com.houlaidahamada.musicmanager.dto.author;
 
+import com.houlaidahamada.musicmanager.entity.Author;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
 public class AuthorCreateDto {
+
+    @NotBlank
     private String fullName;
-    private String biography;
 
-    public String getFullName() {
-        return fullName;
-    }
+    private Author.AuthorRole role;
 
-    public String getBiography() {
-        return biography;
-    }
+    private String email;
 }

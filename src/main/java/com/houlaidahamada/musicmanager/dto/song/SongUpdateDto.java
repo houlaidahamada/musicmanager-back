@@ -1,19 +1,13 @@
 package com.houlaidahamada.musicmanager.dto.song;
 
+import com.houlaidahamada.musicmanager.entity.Song;
+import lombok.Data;
+
+@Data
 public class SongUpdateDto {
+
     private String title;
     private String description;
-    private boolean completed;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
+    private Song.SongStatus status;
+    private Double duration;
 }

@@ -1,14 +1,15 @@
 package com.houlaidahamada.musicmanager.dto.song;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
 public class SongCreateDto {
+
+    @NotBlank
     private String title;
+
     private String description;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
+    private Double duration;
 }
