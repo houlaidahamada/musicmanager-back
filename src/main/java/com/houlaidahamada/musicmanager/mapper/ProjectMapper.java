@@ -4,6 +4,7 @@ import com.houlaidahamada.musicmanager.dto.project.ProjectCreateDto;
 import com.houlaidahamada.musicmanager.dto.project.ProjectResponseDto;
 import com.houlaidahamada.musicmanager.dto.project.ProjectUpdateDto;
 import com.houlaidahamada.musicmanager.entity.Project;
+import com.houlaidahamada.musicmanager.entity.Song;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -15,4 +16,8 @@ public interface ProjectMapper {
     ProjectResponseDto toDto(Project project);
 
     void updateEntityFromDto(ProjectUpdateDto dto, @MappingTarget Project project);
+
+    default String map(Song song) {
+        return song != null ? song.getTitle() : null;
+    }
 }
