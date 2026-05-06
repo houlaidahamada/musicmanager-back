@@ -8,7 +8,9 @@ import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.ArtistProfileMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +48,18 @@ public class ArtistProfileService {
                 .stream()
                 .map(artistProfileMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public ArtistProfileResponseDto getArtistProfile(Long id, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        ArtistProfile artistProfile = artistProfileRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profil artistique introuvable."));
+
+        if (!artistProfile.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous n'avez pas la permission de consulter ce profil artistique.");
+        }
+
+        return artistProfileMapper.toDto(artistProfile);
     }
 
     public ArtistProfileResponseDto updateArtistProfile(Long id, ArtistProfileUpdateDto dto, String username) {

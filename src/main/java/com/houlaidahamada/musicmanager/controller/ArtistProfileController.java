@@ -39,6 +39,14 @@ public class ArtistProfileController {
         return artistProfileService.getArtistProfiles(principal.getName());
     }
 
+    @GetMapping("/{id}")
+    public ArtistProfileResponseDto getArtistProfile(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        return artistProfileService.getArtistProfile(id, principal.getName());
+    }
+
     @PutMapping("/{id}")
     public ArtistProfileResponseDto updateArtistProfile(
             @PathVariable Long id,

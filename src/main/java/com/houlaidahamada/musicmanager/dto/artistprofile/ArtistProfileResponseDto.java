@@ -12,4 +12,6 @@ public class ArtistProfileResponseDto {
     private String profilePictureUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int songCount;
+    private int albumCount;
 }
