@@ -81,4 +81,22 @@ public class ArtistProfileService {
         artistProfileMapper.updateEntityFromDto(dto, artistProfile);
         return artistProfileMapper.toDto(artistProfileRepository.save(artistProfile));
     }
+
+    public void deleteArtistProfile(Long id, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        ArtistProfile artistProfile = artistProfileRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profil artistique introuvable."));
+
+        if (!artistProfile.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous n'avez pas la permission de supprimer ce profil artistique.");
+        }
+
+        // Vérifier qu'il y a plus d'un profil pour cet utilisateur
+        List<ArtistProfile> userProfiles = artistProfileRepository.findByUserId(user.getId());
+        if (userProfiles.size() <= 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Impossible de supprimer le seul profil artistique existant.");
+        }
+
+        artistProfileRepository.delete(artistProfile);
+    }
 }
