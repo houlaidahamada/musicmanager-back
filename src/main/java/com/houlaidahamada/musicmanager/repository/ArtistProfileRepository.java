@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ArtistProfileRepository extends JpaRepository<ArtistProfile, Long> {
     List<ArtistProfile> findByUserId(Long userId);
+    boolean existsByUserIdAndArtistNameIgnoreCase(Long userId, String artistName);
 }

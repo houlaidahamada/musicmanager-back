@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "artist_profiles")
+@Table(name = "artist_profiles", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "artist_name"}))
 @Data
 public class ArtistProfile {
 
@@ -19,7 +19,7 @@ public class ArtistProfile {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "artist_name")
+    @Column(name = "artist_name", nullable = false)
     private String artistName;
 
     private String biography;

@@ -9,6 +9,9 @@ import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ArtistProfileService {
 
@@ -26,8 +29,21 @@ public class ArtistProfileService {
 
     public ArtistProfileResponseDto createArtistProfile(ArtistProfileCreateDto dto, String username) {
         User user = userRepository.findByUsername(username).orElseThrow();
+
+        if (artistProfileRepository.existsByUserIdAndArtistNameIgnoreCase(user.getId(), dto.getArtistName())) {
+            throw new IllegalArgumentException("Un profil artistique avec ce nom existe déjà pour cet utilisateur.");
+        }
+
         ArtistProfile artistProfile = artistProfileMapper.toEntity(dto);
         artistProfile.setUser(user);
         return artistProfileMapper.toDto(artistProfileRepository.save(artistProfile));
+    }
+
+    public List<ArtistProfileResponseDto> getArtistProfiles(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow();
+        return artistProfileRepository.findByUserId(user.getId())
+                .stream()
+                .map(artistProfileMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
