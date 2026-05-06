@@ -2,10 +2,13 @@ package com.houlaidahamada.musicmanager.controller;
 
 import com.houlaidahamada.musicmanager.dto.artistprofile.ArtistProfileCreateDto;
 import com.houlaidahamada.musicmanager.dto.artistprofile.ArtistProfileResponseDto;
+import com.houlaidahamada.musicmanager.dto.artistprofile.ArtistProfileUpdateDto;
 import com.houlaidahamada.musicmanager.service.ArtistProfileService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +37,14 @@ public class ArtistProfileController {
     @GetMapping
     public List<ArtistProfileResponseDto> getArtistProfiles(Principal principal) {
         return artistProfileService.getArtistProfiles(principal.getName());
+    }
+
+    @PutMapping("/{id}")
+    public ArtistProfileResponseDto updateArtistProfile(
+            @PathVariable Long id,
+            @Valid @RequestBody ArtistProfileUpdateDto artistProfileUpdateDto,
+            Principal principal
+    ) {
+        return artistProfileService.updateArtistProfile(id, artistProfileUpdateDto, principal.getName());
     }
 }
