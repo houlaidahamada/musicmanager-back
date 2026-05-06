@@ -62,7 +62,7 @@ public class SongService {
 
         song.setTitle(dto.getTitle());
         song.setDescription(dto.getDescription());
-        song.setCompleted(dto.isCompleted());
+//        song.setCompleted(dto.isCompleted());
 
         return songMapper.toDto(songRepository.save(song));
     }
@@ -78,12 +78,12 @@ public class SongService {
     // -------------------------
     // GET COMPLETED SONGS
     // -------------------------
-    public List<SongResponseDto> getCompletedSongs() {
-        return songRepository.findByCompleted(true)
-                .stream()
-                .map(songMapper::toDto)
-                .toList();
-    }
+//    public List<SongResponseDto> getCompletedSongs() {
+//        return songRepository.findByCompleted(true)
+//                .stream()
+//                .map(songMapper::toDto)
+//                .toList();
+//    }
 
     // -------------------------
     // ADD AUTHOR TO SONG
@@ -114,14 +114,14 @@ public class SongService {
     // -------------------------
     // SEARCH
     // -------------------------
-    public List<SongResponseDto> searchSongs(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return List.of();
-        }
-
-        return songRepository.findByTitleContainingIgnoreCase(keyword)
-                .stream()
-                .map(songMapper::toDto)
-                .toList();
-    }
+//    public List<SongResponseDto> searchSongs(String keyword) {
+//        if (keyword == null || keyword.isBlank()) {
+//            return List.of();
+//        }
+//
+//        return songRepository.findByTitleContainingIgnoreCase(keyword)
+//                .stream()
+//                .map(songMapper::toDto)
+//                .toList();
+//    }
 }

@@ -46,7 +46,7 @@ public class AuthorService {
         Author author = new Author();
 
         author.setFullName(dto.getFullName());
-        author.setBiography(dto.getBiography());
+        //author.setBiography(dto.getBiography());
 
         return authorMapper.toDto(authorRepository.save(author));
     }
@@ -58,7 +58,7 @@ public class AuthorService {
         Author author = authorRepository.findById(id).orElseThrow();
 
         author.setFullName(dto.getFullName());
-        author.setBiography(dto.getBiography());
+        //author.setBiography(dto.getBiography());
 
         return authorMapper.toDto(authorRepository.save(author));
     }
@@ -74,14 +74,14 @@ public class AuthorService {
     // -------------------------
     // SEARCH
     // -------------------------
-    public List<AuthorResponseDto> searchAuthors(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return List.of();
-        }
-
-        return authorRepository.findByFullNameContainingIgnoreCase(keyword)
-                .stream()
-                .map(authorMapper::toDto)
-                .toList();
-    }
+//    public List<AuthorResponseDto> searchAuthors(String keyword) {
+//        if (keyword == null || keyword.isBlank()) {
+//            return List.of();
+//        }
+//
+//        return authorRepository.findByFullNameContainingIgnoreCase(keyword)
+//                .stream()
+//                .map(authorMapper::toDto)
+//                .toList();
+//    }
 }
