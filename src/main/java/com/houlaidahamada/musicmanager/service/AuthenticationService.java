@@ -1,5 +1,6 @@
 package com.houlaidahamada.musicmanager.service;
 
+import com.houlaidahamada.musicmanager.dto.user.AuthResponseDto;
 import com.houlaidahamada.musicmanager.dto.user.UserLoginDto;
 import com.houlaidahamada.musicmanager.dto.user.UserRegisterDto;
 import com.houlaidahamada.musicmanager.entity.User;

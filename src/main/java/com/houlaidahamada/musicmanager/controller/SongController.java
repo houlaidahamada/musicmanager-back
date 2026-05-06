@@ -53,13 +53,13 @@ public class SongController {
         songService.deleteSong(id);
     }
 
-    @GetMapping("/completed")
-    public List<SongResponseDto> getCompletedSongs() {
-        return songService.getCompletedSongs();
-    }
-
-    @GetMapping("/search")
-    public List<SongResponseDto> searchSongs(@RequestParam String keyword) {
-        return songService.searchSongs(keyword);
-    }
+//    @GetMapping("/completed")
+//    public List<SongResponseDto> getCompletedSongs() {
+//        return songService.getCompletedSongs();
+//    }
+//
+//    @GetMapping("/search")
+//    public List<SongResponseDto> searchSongs(@RequestParam String keyword) {
+//        return songService.searchSongs(keyword);
+//    }
 }
