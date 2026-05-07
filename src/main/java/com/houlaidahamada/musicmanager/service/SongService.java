@@ -13,6 +13,8 @@ import com.houlaidahamada.musicmanager.repository.AuthorRepository;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,11 +41,13 @@ public class SongService {
     // -------------------------
     // GET ALL SONGS
     // -------------------------
-    public List<SongResponseDto> getAllSongs() {
-        return songRepository.findAll()
-                .stream()
-                .map(songMapper::toDto)
-                .toList();
+    public Page<SongResponseDto> getSongs(Pageable pageable, Song.SongStatus status) {
+        if (status != null) {
+            return songRepository.findByStatus(status, pageable)
+                    .map(songMapper::toDto);
+        }
+        return songRepository.findAll(pageable)
+                .map(songMapper::toDto);
     }
 
     // -------------------------

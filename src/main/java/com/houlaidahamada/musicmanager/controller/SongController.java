@@ -4,10 +4,13 @@ import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
+import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.service.SongService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/songs")
@@ -20,8 +23,11 @@ public class SongController {
     }
 
     @GetMapping
-    public List<SongResponseDto> getAllSongs() {
-        return songService.getAllSongs();
+    public Page<SongResponseDto> getSongs(
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
+            @RequestParam(required = false) Song.SongStatus status
+    ) {
+        return songService.getSongs(pageable, status);
     }
 
     @GetMapping("/{id}")
