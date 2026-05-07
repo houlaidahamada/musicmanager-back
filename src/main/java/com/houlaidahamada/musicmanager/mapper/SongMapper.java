@@ -1,13 +1,16 @@
 package com.houlaidahamada.musicmanager.mapper;
 
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
+import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
+import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Author;
 import com.houlaidahamada.musicmanager.entity.Lyrics;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.entity.Theme;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -16,7 +19,19 @@ public interface SongMapper {
 
     SongResponseDto toDto(Song song);
 
+    @Mapping(target = "status", expression = "java(song.getStatus().name())")
+    @Mapping(target = "artistName", source = "artistProfile.artistName")
+    SongCreateResponseDto toCreateResponseDto(Song song);
+
     void updateEntityFromDto(SongUpdateDto dto, @MappingTarget Song song);
+
+    default String map(Song.SongStatus status) {
+        return status != null ? status.name() : null;
+    }
+
+    default String map(ArtistProfile artistProfile) {
+        return artistProfile != null ? artistProfile.getArtistName() : null;
+    }
 
     default String map(Author author) {
         return author != null ? author.getFullName() : null;

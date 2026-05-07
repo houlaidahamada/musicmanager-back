@@ -1,13 +1,20 @@
 package com.houlaidahamada.musicmanager.service;
 
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
+import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.Author;
+import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Song;
+import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.AuthorRepository;
+import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
+import com.houlaidahamada.musicmanager.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +24,15 @@ public class SongService {
 
     private final SongRepository songRepository;
     private final AuthorRepository authorRepository;
+    private final ArtistProfileRepository artistProfileRepository;
+    private final UserRepository userRepository;
     private final SongMapper songMapper;
 
-    public SongService(SongRepository songRepository, AuthorRepository authorRepository, SongMapper songMapper) {
+    public SongService(SongRepository songRepository, AuthorRepository authorRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, SongMapper songMapper) {
         this.songRepository = songRepository;
         this.authorRepository = authorRepository;
+        this.artistProfileRepository = artistProfileRepository;
+        this.userRepository = userRepository;
         this.songMapper = songMapper;
     }
 
@@ -46,34 +57,46 @@ public class SongService {
     // -------------------------
     // CREATE SONG
     // -------------------------
-    public SongResponseDto createSong(SongCreateDto dto) {
+    public SongCreateResponseDto createSong(SongCreateDto dto) {
+        // Get current authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Get active artist profile (assuming first one for now)
+        ArtistProfile artistProfile = artistProfileRepository.findByUserId(user.getId()).stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("No artist profile found for user"));
+
         Song song = new Song();
         song.setTitle(dto.getTitle());
         song.setDescription(dto.getDescription());
+        song.setDuration(dto.getDuration());
+        song.setStatus(Song.SongStatus.DRAFT);
+        song.setArtistProfile(artistProfile);
+        song.setCreatedAt(java.time.LocalDateTime.now());
+        song.setUpdatedAt(java.time.LocalDateTime.now());
+
         Song saved = songRepository.save(song);
-        return songMapper.toDto(saved);
-    }
+        return songMapper.toCreateResponseDto(saved);
+//     // UPDATE SONG
+//     // -------------------------
+//     public SongResponseDto updateSong(Long id, SongUpdateDto dto) {
+//         Song song = songRepository.findById(id).orElseThrow();
 
-    // -------------------------
-    // UPDATE SONG
-    // -------------------------
-    public SongResponseDto updateSong(Long id, SongUpdateDto dto) {
-        Song song = songRepository.findById(id).orElseThrow();
+//         song.setTitle(dto.getTitle());
+//         song.setDescription(dto.getDescription());
+// //        song.setCompleted(dto.isCompleted());
 
-        song.setTitle(dto.getTitle());
-        song.setDescription(dto.getDescription());
-//        song.setCompleted(dto.isCompleted());
-
-        return songMapper.toDto(songRepository.save(song));
-    }
+//         return songMapper.toDto(songRepository.save(song));
+//     }
 
     // -------------------------
     // DELETE SONG
-    // -------------------------
-    public void deleteSong(Long id) {
-        Song song = songRepository.findById(id).orElseThrow();
-        songRepository.delete(song);
-    }
+    // // -------------------------
+    // public void deleteSong(Long id) {
+    //     Song song = songRepository.findById(id).orElseThrow();
+    //     songRepository.delete(song);
+    // }
 
     // -------------------------
     // GET COMPLETED SONGS
@@ -88,40 +111,26 @@ public class SongService {
     // -------------------------
     // ADD AUTHOR TO SONG
     // -------------------------
-    public SongResponseDto addAuthorToSong(Long songId, Long authorId) {
-        Song song = songRepository.findById(songId).orElseThrow();
-        Author author = authorRepository.findById(authorId).orElseThrow();
+    // public SongResponseDto addAuthorToSong(Long songId, Long authorId) {
+    //     Song song = songRepository.findById(songId).orElseThrow();
+    //     Author author = authorRepository.findById(authorId).orElseThrow();
 
-        song.getAuthors().add(author);
-        author.getSongs().add(song);
+    //     song.getAuthors().add(author);
+    //     author.getSongs().add(song);
 
-        return songMapper.toDto(songRepository.save(song));
-    }
+    //     return songMapper.toDto(songRepository.save(song));
+    // }
 
     // -------------------------
     // REMOVE AUTHOR FROM SONG
     // -------------------------
-    public SongResponseDto removeAuthorFromSong(Long songId, Long authorId) {
-        Song song = songRepository.findById(songId).orElseThrow();
-        Author author = authorRepository.findById(authorId).orElseThrow();
+    // public SongResponseDto removeAuthorFromSong(Long songId, Long authorId) {
+    //     Song song = songRepository.findById(songId).orElseThrow();
+    //     Author author = authorRepository.findById(authorId).orElseThrow();
 
-        song.getAuthors().remove(author);
-        author.getSongs().remove(song);
+    //     song.getAuthors().remove(author);
+    //     author.getSongs().remove(song);
 
-        return songMapper.toDto(songRepository.save(song));
-    }
-
-    // -------------------------
-    // SEARCH
-    // -------------------------
-//    public List<SongResponseDto> searchSongs(String keyword) {
-//        if (keyword == null || keyword.isBlank()) {
-//            return List.of();
-//        }
-//
-//        return songRepository.findByTitleContainingIgnoreCase(keyword)
-//                .stream()
-//                .map(songMapper::toDto)
-//                .toList();
-//    }
-}
+    //     return songMapper.toDto(songRepository.save(song));
+    // }
+}}
