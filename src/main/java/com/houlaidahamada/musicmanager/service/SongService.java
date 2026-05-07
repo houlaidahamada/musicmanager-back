@@ -3,13 +3,10 @@ package com.houlaidahamada.musicmanager.service;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
-import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
-import com.houlaidahamada.musicmanager.entity.Author;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
-import com.houlaidahamada.musicmanager.repository.AuthorRepository;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
@@ -18,21 +15,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class SongService {
 
     private final SongRepository songRepository;
-    private final AuthorRepository authorRepository;
     private final ArtistProfileRepository artistProfileRepository;
     private final UserRepository userRepository;
     private final SongMapper songMapper;
 
-    public SongService(SongRepository songRepository, AuthorRepository authorRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, SongMapper songMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, SongMapper songMapper) {
         this.songRepository = songRepository;
-        this.authorRepository = authorRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
         this.songMapper = songMapper;
@@ -55,6 +50,13 @@ public class SongService {
     // -------------------------
     public SongResponseDto getSongById(Long id) {
         Song song = songRepository.findById(id).orElseThrow();
+        // Force initialization of lazy-loaded collections to avoid LazyInitializationException
+        song.getAuthors().size();
+        song.getThemes().size();
+        song.getReferences().size();
+        if (song.getLyrics() != null) {
+            song.getLyrics().getId();
+        }
         return songMapper.toDto(song);
     }
 

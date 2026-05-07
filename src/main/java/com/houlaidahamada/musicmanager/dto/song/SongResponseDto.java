@@ -1,5 +1,9 @@
 package com.houlaidahamada.musicmanager.dto.song;
 
+import com.houlaidahamada.musicmanager.dto.author.AuthorResponseDto;
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
+import com.houlaidahamada.musicmanager.dto.reference.ReferenceResponseDto;
+import com.houlaidahamada.musicmanager.dto.theme.ThemeResponseDto;
 import com.houlaidahamada.musicmanager.entity.Song;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -15,7 +19,8 @@ public class SongResponseDto {
     private Double duration;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Set<String> authors;
-    private Set<String> themes;
-    private String lyrics;
+    private Set<AuthorResponseDto> authors;
+    private Set<ThemeResponseDto> themes;
+    private LyricsResponseDto lyrics;
+    private Set<ReferenceResponseDto> references;
 }
