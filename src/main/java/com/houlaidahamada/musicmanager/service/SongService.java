@@ -3,6 +3,7 @@ package com.houlaidahamada.musicmanager.service;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
+import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.entity.User;
@@ -84,17 +85,38 @@ public class SongService {
 
         Song saved = songRepository.save(song);
         return songMapper.toCreateResponseDto(saved);
-//     // UPDATE SONG
-//     // -------------------------
-//     public SongResponseDto updateSong(Long id, SongUpdateDto dto) {
-//         Song song = songRepository.findById(id).orElseThrow();
+    }
 
-//         song.setTitle(dto.getTitle());
-//         song.setDescription(dto.getDescription());
-// //        song.setCompleted(dto.isCompleted());
+    // -------------------------
+// UPDATE SONG
+// -------------------------
+    public SongResponseDto updateSong(Long id, SongUpdateDto dto) {
+        Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
 
-//         return songMapper.toDto(songRepository.save(song));
-//     }
+        if (dto.getTitle() != null) {
+            if (dto.getTitle().trim().isEmpty()) {
+                throw new IllegalArgumentException("Title cannot be blank");
+            }
+            song.setTitle(dto.getTitle());
+        }
+        if (dto.getDescription() != null) {
+            song.setDescription(dto.getDescription());
+        }
+        if (dto.getStatus() != null) {
+            song.setStatus(dto.getStatus());
+        }
+        if (dto.getDuration() != null) {
+            if (dto.getDuration() <= 0) {
+                throw new IllegalArgumentException("Duration must be positive");
+            }
+            song.setDuration(dto.getDuration());
+        }
+
+        song.setUpdatedAt(java.time.LocalDateTime.now());
+
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
+    }
 
     // -------------------------
     // DELETE SONG
@@ -139,4 +161,4 @@ public class SongService {
 
     //     return songMapper.toDto(songRepository.save(song));
     // }
-}}
+}

@@ -3,6 +3,7 @@ package com.houlaidahamada.musicmanager.controller;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
+import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.service.SongService;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/songs")
@@ -39,10 +41,10 @@ public class SongController {
         return songService.createSong(songCreateDto);
     }
 
-    // @PutMapping("/{id}")
-    // public SongResponseDto updateSong(@PathVariable Long id, @RequestBody SongUpdateDto songUpdateDto){
-    //     return songService.updateSong(id, songUpdateDto);
-    // }
+    @PutMapping("/{id}")
+    public SongResponseDto updateSong(@PathVariable Long id, @Valid @RequestBody SongUpdateDto songUpdateDto){
+        return songService.updateSong(id, songUpdateDto);
+    }
 
     // @PostMapping("/{songId}/authors/{authorId}")
     // public SongResponseDto addAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
