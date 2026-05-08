@@ -166,44 +166,9 @@ public class SongService {
                 break;
         }
     }
-    // public void deleteSong(Long id) {
-    //     Song song = songRepository.findById(id).orElseThrow();
-    //     songRepository.delete(song);
-    // }
 
-    // -------------------------
-    // GET COMPLETED SONGS
-    // -------------------------
-//    public List<SongResponseDto> getCompletedSongs() {
-//        return songRepository.findByCompleted(true)
-//                .stream()
-//                .map(songMapper::toDto)
-//                .toList();
-//    }
-
-    // -------------------------
-    // ADD AUTHOR TO SONG
-    // -------------------------
-    // public SongResponseDto addAuthorToSong(Long songId, Long authorId) {
-    //     Song song = songRepository.findById(songId).orElseThrow();
-    //     Author author = authorRepository.findById(authorId).orElseThrow();
-
-    //     song.getAuthors().add(author);
-    //     author.getSongs().add(song);
-
-    //     return songMapper.toDto(songRepository.save(song));
-    // }
-
-    // -------------------------
-    // REMOVE AUTHOR FROM SONG
-    // -------------------------
-    // public SongResponseDto removeAuthorFromSong(Long songId, Long authorId) {
-    //     Song song = songRepository.findById(songId).orElseThrow();
-    //     Author author = authorRepository.findById(authorId).orElseThrow();
-
-    //     song.getAuthors().remove(author);
-    //     author.getSongs().remove(song);
-
-    //     return songMapper.toDto(songRepository.save(song));
-    // }
+    public void deleteSong(Long id) {
+        Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
+        songRepository.delete(song);
+    }
 }
