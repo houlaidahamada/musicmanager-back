@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -180,10 +181,32 @@ public class SongService {
         updatedLyrics.setLanguage(dto.getLanguage() != null ? dto.getLanguage() : currentLyrics.getLanguage());
         updatedLyrics.setVersion(currentLyrics.getVersion() + 1);
         song.addLyrics(updatedLyrics);
-        song.setUpdatedAt(java.time.LocalDateTime.now());
+        song.setUpdatedAt(LocalDateTime.now());
 
         songRepository.save(song);
         return lyricsMapper.toDto(updatedLyrics);
+    }
+
+    public LyricsResponseDto revertLyricsVersion(Long songId, Integer version) {
+        songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        Lyrics sourceLyrics = lyricsRepository.findBySongIdAndVersion(songId, version)
+                .orElseThrow(() -> new RuntimeException("Lyrics version " + version + " not found"));
+
+        Lyrics latestLyrics = lyricsRepository.findTopBySongIdOrderByVersionDesc(songId)
+                .orElseThrow(() -> new RuntimeException("No lyrics found for this song"));
+
+        Lyrics restoredLyrics = new Lyrics();
+        restoredLyrics.setSong(latestLyrics.getSong());
+        restoredLyrics.setContent(sourceLyrics.getContent());
+        restoredLyrics.setFormat(sourceLyrics.getFormat());
+        restoredLyrics.setLanguage(sourceLyrics.getLanguage());
+        restoredLyrics.setVersion(latestLyrics.getVersion() + 1);
+
+        latestLyrics.getSong().addLyrics(restoredLyrics);
+        latestLyrics.getSong().setUpdatedAt(LocalDateTime.now());
+
+        songRepository.save(latestLyrics.getSong());
+        return lyricsMapper.toDto(restoredLyrics);
     }
 
     public List<LyricsResponseDto> getLyricsVersions(Long songId) {

@@ -73,6 +73,11 @@ public class SongController {
         return songService.getLyricsVersions(id);
     }
 
+    @PostMapping("/{id}/lyrics/revert/{version}")
+    public LyricsResponseDto revertSongLyricsVersion(@PathVariable Long id, @PathVariable Integer version) {
+        return songService.revertLyricsVersion(id, version);
+    }
+
     @GetMapping("/{id}/lyrics/versions/compare")
     public LyricsCompareResponseDto compareSongLyricsVersions(
             @PathVariable Long id,
