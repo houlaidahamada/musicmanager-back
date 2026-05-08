@@ -1,13 +1,17 @@
 package com.houlaidahamada.musicmanager.service;
 
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongStatusUpdateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
+import com.houlaidahamada.musicmanager.entity.Lyrics;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.entity.User;
+import com.houlaidahamada.musicmanager.mapper.LyricsMapper;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
@@ -27,12 +31,14 @@ public class SongService {
     private final ArtistProfileRepository artistProfileRepository;
     private final UserRepository userRepository;
     private final SongMapper songMapper;
+    private final LyricsMapper lyricsMapper;
 
-    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, SongMapper songMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
         this.songRepository = songRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
         this.songMapper = songMapper;
+        this.lyricsMapper = lyricsMapper;
     }
 
     // -------------------------
@@ -136,6 +142,22 @@ public class SongService {
 
         Song updatedSong = songRepository.save(song);
         return songMapper.toDto(updatedSong);
+    }
+
+    public LyricsResponseDto createLyrics(Long songId, LyricsCreateDto dto) {
+        Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        if (song.getLyrics() != null) {
+            throw new IllegalStateException("Lyrics already exist for this song");
+        }
+
+        Lyrics lyrics = lyricsMapper.toEntity(dto);
+        lyrics.setSong(song);
+        lyrics.setVersion(1);
+        song.setLyrics(lyrics);
+        song.setUpdatedAt(java.time.LocalDateTime.now());
+
+        songRepository.save(song);
+        return lyricsMapper.toDto(lyrics);
     }
 
     private void validateStatusTransition(Song.SongStatus currentStatus, Song.SongStatus newStatus) {

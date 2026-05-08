@@ -1,5 +1,7 @@
 package com.houlaidahamada.musicmanager.controller;
 
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
@@ -50,6 +52,11 @@ public class SongController {
     @PutMapping("/{id}/status")
     public SongResponseDto updateSongStatus(@PathVariable Long id, @Valid @RequestBody SongStatusUpdateDto statusUpdateDto){
         return songService.updateSongStatus(id, statusUpdateDto);
+    }
+
+    @PostMapping("/{id}/lyrics")
+    public LyricsResponseDto createSongLyrics(@PathVariable Long id, @Valid @RequestBody LyricsCreateDto lyricsCreateDto){
+        return songService.createLyrics(id, lyricsCreateDto);
     }
     
     @DeleteMapping("/{id}")
