@@ -51,29 +51,9 @@ public class SongController {
     public SongResponseDto updateSongStatus(@PathVariable Long id, @Valid @RequestBody SongStatusUpdateDto statusUpdateDto){
         return songService.updateSongStatus(id, statusUpdateDto);
     }
-
-    // @PostMapping("/{songId}/authors/{authorId}")
-    // public SongResponseDto addAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
-    //     return songService.addAuthorToSong(songId, authorId);
-    // }
-
-    // @DeleteMapping("/{songId}/authors/{authorId}")
-    // public SongResponseDto removeAuthorFromSong(@PathVariable Long songId, @PathVariable Long authorId) {
-    //     return songService.removeAuthorFromSong(songId, authorId);
-    // }
-
-    // @DeleteMapping("/{id}")
-    // public void deleteSong(@PathVariable Long id){
-    //     songService.deleteSong(id);
-    // }
-
-//    @GetMapping("/completed")
-//    public List<SongResponseDto> getCompletedSongs() {
-//        return songService.getCompletedSongs();
-//    }
-//
-//    @GetMapping("/search")
-//    public List<SongResponseDto> searchSongs(@RequestParam String keyword) {
-//        return songService.searchSongs(keyword);
-//    }
+    
+    @DeleteMapping("/{id}")
+    public void deleteSong(@PathVariable Long id){
+        songService.deleteSong(id);
+    }
 }
