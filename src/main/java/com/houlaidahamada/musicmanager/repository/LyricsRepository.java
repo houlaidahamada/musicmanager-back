@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface LyricsRepository extends JpaRepository<Lyrics, Long> {
     Optional<Lyrics> findTopBySongIdOrderByVersionDesc(Long songId);
     List<Lyrics> findBySongIdOrderByVersionDesc(Long songId);
+    Optional<Lyrics> findBySongIdAndVersion(Long songId, Integer version);
 }

@@ -1,5 +1,6 @@
 package com.houlaidahamada.musicmanager.controller;
 
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCompareResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsUpdateDto;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/songs")
@@ -63,6 +66,20 @@ public class SongController {
     @PutMapping("/{id}/lyrics")
     public LyricsResponseDto updateSongLyrics(@PathVariable Long id, @Valid @RequestBody LyricsUpdateDto lyricsUpdateDto){
         return songService.updateLyrics(id, lyricsUpdateDto);
+    }
+
+    @GetMapping("/{id}/lyrics/versions")
+    public List<LyricsResponseDto> getSongLyricsVersions(@PathVariable Long id){
+        return songService.getLyricsVersions(id);
+    }
+
+    @GetMapping("/{id}/lyrics/versions/compare")
+    public LyricsCompareResponseDto compareSongLyricsVersions(
+            @PathVariable Long id,
+            @RequestParam Integer baseVersion,
+            @RequestParam Integer compareVersion
+    ) {
+        return songService.compareLyricsVersions(id, baseVersion, compareVersion);
     }
     
     @DeleteMapping("/{id}")

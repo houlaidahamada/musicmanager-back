@@ -1,5 +1,6 @@
 package com.houlaidahamada.musicmanager.service;
 
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCompareResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsUpdateDto;
@@ -24,6 +25,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -180,6 +184,34 @@ public class SongService {
 
         songRepository.save(song);
         return lyricsMapper.toDto(updatedLyrics);
+    }
+
+    public List<LyricsResponseDto> getLyricsVersions(Long songId) {
+        songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        return lyricsRepository.findBySongIdOrderByVersionDesc(songId).stream()
+                .map(lyricsMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public LyricsCompareResponseDto compareLyricsVersions(Long songId, Integer baseVersion, Integer compareVersion) {
+        if (baseVersion == null || compareVersion == null) {
+            throw new IllegalArgumentException("Both baseVersion and compareVersion are required");
+        }
+        if (baseVersion.equals(compareVersion)) {
+            throw new IllegalArgumentException("baseVersion and compareVersion must be different");
+        }
+
+        songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+
+        Lyrics baseLyrics = lyricsRepository.findBySongIdAndVersion(songId, baseVersion)
+                .orElseThrow(() -> new RuntimeException("Lyrics version " + baseVersion + " not found"));
+        Lyrics compareLyrics = lyricsRepository.findBySongIdAndVersion(songId, compareVersion)
+                .orElseThrow(() -> new RuntimeException("Lyrics version " + compareVersion + " not found"));
+
+        return new LyricsCompareResponseDto(
+                lyricsMapper.toDto(baseLyrics),
+                lyricsMapper.toDto(compareLyrics)
+        );
     }
 
     private void validateStatusTransition(Song.SongStatus currentStatus, Song.SongStatus newStatus) {
