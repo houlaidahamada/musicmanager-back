@@ -26,7 +26,7 @@ public interface SongMapper {
 
     @Mapping(target = "authors", source = "song.authors")
     @Mapping(target = "themes", source = "song.themes")
-    @Mapping(target = "lyrics", source = "song.lyrics")
+    @Mapping(target = "lyrics", expression = "java(song.getLatestLyrics())")
     @Mapping(target = "references", source = "song.references")
     SongResponseDto toDto(Song song);
 
