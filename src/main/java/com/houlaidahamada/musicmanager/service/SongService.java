@@ -3,6 +3,7 @@ package com.houlaidahamada.musicmanager.service;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
+import com.houlaidahamada.musicmanager.dto.song.SongStatusUpdateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Song;
@@ -119,8 +120,52 @@ public class SongService {
     }
 
     // -------------------------
-    // DELETE SONG
-    // // -------------------------
+    // UPDATE SONG STATUS
+    // -------------------------
+    public SongResponseDto updateSongStatus(Long id, SongStatusUpdateDto dto) {
+        Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
+
+        Song.SongStatus newStatus = dto.getStatus();
+        Song.SongStatus currentStatus = song.getStatus();
+
+        // Validate status transition
+        validateStatusTransition(currentStatus, newStatus);
+
+        song.setStatus(newStatus);
+        song.setUpdatedAt(java.time.LocalDateTime.now());
+
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
+    }
+
+    private void validateStatusTransition(Song.SongStatus currentStatus, Song.SongStatus newStatus) {
+        if (currentStatus == newStatus) {
+            throw new IllegalArgumentException("Song is already in status: " + currentStatus);
+        }
+
+        switch (currentStatus) {
+            case DRAFT:
+                if (newStatus != Song.SongStatus.IN_PROGRESS && newStatus != Song.SongStatus.ARCHIVED) {
+                    throw new IllegalArgumentException("Invalid transition from DRAFT to " + newStatus + ". Valid transitions: IN_PROGRESS, ARCHIVED");
+                }
+                break;
+            case IN_PROGRESS:
+                if (newStatus != Song.SongStatus.COMPLETED && newStatus != Song.SongStatus.ARCHIVED) {
+                    throw new IllegalArgumentException("Invalid transition from IN_PROGRESS to " + newStatus + ". Valid transitions: COMPLETED, ARCHIVED");
+                }
+                break;
+            case COMPLETED:
+                if (newStatus != Song.SongStatus.ARCHIVED) {
+                    throw new IllegalArgumentException("Invalid transition from COMPLETED to " + newStatus + ". Valid transition: ARCHIVED");
+                }
+                break;
+            case ARCHIVED:
+                if (newStatus != Song.SongStatus.DRAFT) {
+                    throw new IllegalArgumentException("Invalid transition from ARCHIVED to " + newStatus + ". Valid transition: DRAFT");
+                }
+                break;
+        }
+    }
     // public void deleteSong(Long id) {
     //     Song song = songRepository.findById(id).orElseThrow();
     //     songRepository.delete(song);
