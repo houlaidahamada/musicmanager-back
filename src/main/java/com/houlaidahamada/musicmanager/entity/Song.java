@@ -3,6 +3,7 @@ package com.houlaidahamada.musicmanager.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,8 +40,8 @@ public class Song {
 
     private Double duration;
 
-    @OneToOne(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Lyrics lyrics;
+    @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Lyrics> lyrics = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -60,6 +61,17 @@ public class Song {
 
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Reference> references = new HashSet<>();
+
+    public Lyrics getLatestLyrics() {
+        return lyrics.stream()
+                .max(Comparator.comparing(Lyrics::getVersion))
+                .orElse(null);
+    }
+
+    public void addLyrics(Lyrics lyricsEntry) {
+        lyrics.add(lyricsEntry);
+        lyricsEntry.setSong(this);
+    }
 
     @PrePersist
     protected void onCreate() {

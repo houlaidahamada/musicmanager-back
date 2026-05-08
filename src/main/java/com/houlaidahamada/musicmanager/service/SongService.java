@@ -2,6 +2,7 @@ package com.houlaidahamada.musicmanager.service;
 
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
+import com.houlaidahamada.musicmanager.dto.lyrics.LyricsUpdateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
@@ -14,6 +15,7 @@ import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.LyricsMapper;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
+import com.houlaidahamada.musicmanager.repository.LyricsRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -30,13 +32,15 @@ public class SongService {
     private final SongRepository songRepository;
     private final ArtistProfileRepository artistProfileRepository;
     private final UserRepository userRepository;
+    private final LyricsRepository lyricsRepository;
     private final SongMapper songMapper;
     private final LyricsMapper lyricsMapper;
 
-    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
         this.songRepository = songRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
+        this.lyricsRepository = lyricsRepository;
         this.songMapper = songMapper;
         this.lyricsMapper = lyricsMapper;
     }
@@ -62,9 +66,7 @@ public class SongService {
         song.getAuthors().size();
         song.getThemes().size();
         song.getReferences().size();
-        if (song.getLyrics() != null) {
-            song.getLyrics().getId();
-        }
+        song.getLyrics().size();
         return songMapper.toDto(song);
     }
 
@@ -146,18 +148,38 @@ public class SongService {
 
     public LyricsResponseDto createLyrics(Long songId, LyricsCreateDto dto) {
         Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
-        if (song.getLyrics() != null) {
+        if (song.getLatestLyrics() != null) {
             throw new IllegalStateException("Lyrics already exist for this song");
         }
 
         Lyrics lyrics = lyricsMapper.toEntity(dto);
         lyrics.setSong(song);
         lyrics.setVersion(1);
-        song.setLyrics(lyrics);
+        song.addLyrics(lyrics);
         song.setUpdatedAt(java.time.LocalDateTime.now());
 
         songRepository.save(song);
         return lyricsMapper.toDto(lyrics);
+    }
+
+    public LyricsResponseDto updateLyrics(Long songId, LyricsUpdateDto dto) {
+        Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        Lyrics currentLyrics = song.getLatestLyrics();
+        if (currentLyrics == null) {
+            throw new RuntimeException("No lyrics found for this song");
+        }
+
+        Lyrics updatedLyrics = new Lyrics();
+        updatedLyrics.setSong(song);
+        updatedLyrics.setContent(dto.getContent() != null ? dto.getContent() : currentLyrics.getContent());
+        updatedLyrics.setFormat(dto.getFormat() != null ? dto.getFormat() : currentLyrics.getFormat());
+        updatedLyrics.setLanguage(dto.getLanguage() != null ? dto.getLanguage() : currentLyrics.getLanguage());
+        updatedLyrics.setVersion(currentLyrics.getVersion() + 1);
+        song.addLyrics(updatedLyrics);
+        song.setUpdatedAt(java.time.LocalDateTime.now());
+
+        songRepository.save(song);
+        return lyricsMapper.toDto(updatedLyrics);
     }
 
     private void validateStatusTransition(Song.SongStatus currentStatus, Song.SongStatus newStatus) {
