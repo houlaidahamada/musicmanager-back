@@ -5,6 +5,8 @@ import com.houlaidahamada.musicmanager.dto.theme.ThemeResponseDto;
 import com.houlaidahamada.musicmanager.entity.Theme;
 import com.houlaidahamada.musicmanager.mapper.ThemeMapper;
 import com.houlaidahamada.musicmanager.repository.ThemeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,5 +31,9 @@ public class ThemeService {
         Theme theme = themeMapper.toEntity(dto);
         Theme saved = themeRepository.save(theme);
         return themeMapper.toDto(saved);
+    }
+
+    public Page<ThemeResponseDto> getThemes(Pageable pageable) {
+        return themeRepository.findAllWithSongCount(pageable);
     }
 }
