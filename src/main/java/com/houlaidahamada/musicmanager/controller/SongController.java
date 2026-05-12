@@ -99,6 +99,11 @@ public class SongController {
     public ReferenceResponseDto createSongReference(@PathVariable Long id, @Valid @RequestBody ReferenceCreateDto referenceCreateDto){
         return songService.createSongReference(id, referenceCreateDto);
     }
+       
+    @DeleteMapping("/{id}/references/{refId}")
+    public SongResponseDto deleteSongReference(@PathVariable Long id, @PathVariable Long refId){
+        return songService.deleteSongReference(id, refId);
+    }
 
     @PostMapping("/{songId}/authors/{authorId}")
     public SongResponseDto assignAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
