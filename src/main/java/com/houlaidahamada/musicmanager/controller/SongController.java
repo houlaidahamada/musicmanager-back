@@ -88,6 +88,12 @@ public class SongController {
         return songService.compareLyricsVersions(id, baseVersion, compareVersion);
     }
 
+    @PostMapping("/{songId}/authors/{authorId}")
+    public SongResponseDto assignAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
+        return songService.assignAuthorToSong(songId, authorId);
+    }
+
+
     @PostMapping("/{songId}/themes/{themeId}")
     public SongResponseDto assignThemeToSong(@PathVariable Long songId, @PathVariable Long themeId) {
         return songService.assignThemeToSong(songId, themeId);
