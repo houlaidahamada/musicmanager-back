@@ -92,7 +92,11 @@ public class SongController {
     public SongResponseDto assignAuthorToSong(@PathVariable Long songId, @PathVariable Long authorId) {
         return songService.assignAuthorToSong(songId, authorId);
     }
-
+    
+    @DeleteMapping("/{songId}/authors/{authorId}")
+    public SongResponseDto removeAuthorFromSong(@PathVariable Long songId, @PathVariable Long authorId) {
+        return songService.removeAuthorFromSong(songId, authorId);
+    }
 
     @PostMapping("/{songId}/themes/{themeId}")
     public SongResponseDto assignThemeToSong(@PathVariable Long songId, @PathVariable Long themeId) {

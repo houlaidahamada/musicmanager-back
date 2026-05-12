@@ -315,4 +315,15 @@ public class SongService {
         Song updatedSong = songRepository.save(song);
         return songMapper.toDto(updatedSong);
     }
+
+    public SongResponseDto removeAuthorFromSong(Long songId, Long authorId) {
+        Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        Author author = authorRepository.findById(authorId).orElseThrow(() -> new RuntimeException("Author not found"));
+
+        song.getAuthors().remove(author);
+        song.setUpdatedAt(LocalDateTime.now());
+
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
+    }
 }
