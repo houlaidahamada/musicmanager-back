@@ -21,8 +21,11 @@ import com.houlaidahamada.musicmanager.repository.LyricsRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.ThemeRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
+import com.houlaidahamada.musicmanager.specification.SongSpecification;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -57,12 +60,13 @@ public class SongService {
     // -------------------------
     // GET ALL SONGS
     // -------------------------
-    public Page<SongResponseDto> getSongs(Pageable pageable, Song.SongStatus status) {
-        if (status != null) {
-            return songRepository.findByStatus(status, pageable)
-                    .map(songMapper::toDto);
-        }
-        return songRepository.findAll(pageable)
+    public Page<SongResponseDto> getSongs(Pageable pageable, Song.SongStatus status, Long themeId) {
+
+        Specification<Song> spec = Specification
+                .where(SongSpecification.hasStatus(status))
+                .and(SongSpecification.hasThemeId(themeId));
+
+        return songRepository.findAll(spec, pageable)
                 .map(songMapper::toDto);
     }
 
