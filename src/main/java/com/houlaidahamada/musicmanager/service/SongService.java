@@ -4,6 +4,8 @@ import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCompareResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsUpdateDto;
+import com.houlaidahamada.musicmanager.dto.reference.ReferenceCreateDto;
+import com.houlaidahamada.musicmanager.dto.reference.ReferenceResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
@@ -12,10 +14,12 @@ import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Author;
 import com.houlaidahamada.musicmanager.entity.Lyrics;
+import com.houlaidahamada.musicmanager.entity.Reference;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.entity.Theme;
 import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.LyricsMapper;
+import com.houlaidahamada.musicmanager.mapper.ReferenceMapper;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.AuthorRepository;
@@ -24,7 +28,6 @@ import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.ThemeRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
 import com.houlaidahamada.musicmanager.specification.SongSpecification;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -49,8 +52,9 @@ public class SongService {
     private final AuthorRepository authorRepository;
     private final SongMapper songMapper;
     private final LyricsMapper lyricsMapper;
+    private final ReferenceMapper referenceMapper;
 
-    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, AuthorRepository authorRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, AuthorRepository authorRepository, SongMapper songMapper, LyricsMapper lyricsMapper, ReferenceMapper referenceMapper) {
         this.songRepository = songRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
@@ -59,6 +63,7 @@ public class SongService {
         this.authorRepository = authorRepository;
         this.songMapper = songMapper;
         this.lyricsMapper = lyricsMapper;
+        this.referenceMapper = referenceMapper;
     }
 
     // -------------------------
@@ -325,5 +330,21 @@ public class SongService {
 
         Song updatedSong = songRepository.save(song);
         return songMapper.toDto(updatedSong);
+    }
+
+    public ReferenceResponseDto createSongReference(Long id, ReferenceCreateDto referenceCreateDto) {
+        Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
+
+        Reference reference = new Reference();
+        reference.setTitle(referenceCreateDto.getTitle());
+        reference.setUrl(referenceCreateDto.getUrl());
+        reference.setType(referenceCreateDto.getType());
+        reference.setDescription(referenceCreateDto.getDescription());
+
+        song.getReferences().add(reference);
+        song.setUpdatedAt(LocalDateTime.now());
+
+        songRepository.save(song);
+        return referenceMapper.toDto(reference);
     }
 }

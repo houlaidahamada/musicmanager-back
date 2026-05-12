@@ -4,6 +4,8 @@ import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCompareResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsCreateDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsResponseDto;
 import com.houlaidahamada.musicmanager.dto.lyrics.LyricsUpdateDto;
+import com.houlaidahamada.musicmanager.dto.reference.ReferenceCreateDto;
+import com.houlaidahamada.musicmanager.dto.reference.ReferenceResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
@@ -86,6 +88,11 @@ public class SongController {
             @RequestParam Integer compareVersion
     ) {
         return songService.compareLyricsVersions(id, baseVersion, compareVersion);
+    }
+
+    @PostMapping("/{id}/references")
+    public ReferenceResponseDto createSongReference(@PathVariable Long id, @Valid @RequestBody ReferenceCreateDto referenceCreateDto){
+        return songService.createSongReference(id, referenceCreateDto);
     }
 
     @PostMapping("/{songId}/authors/{authorId}")
