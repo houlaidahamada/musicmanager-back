@@ -281,6 +281,17 @@ public class SongService {
         return songMapper.toDto(updatedSong);
     }
 
+    public SongResponseDto removeThemeFromSong(Long songId, Long themeId) {
+        Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        Theme theme = themeRepository.findById(themeId).orElseThrow(() -> new RuntimeException("Theme not found"));
+
+        song.getThemes().remove(theme);
+        song.setUpdatedAt(LocalDateTime.now());
+
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
+    }
+
     public void deleteSong(Long id) {
         Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
         songRepository.delete(song);
