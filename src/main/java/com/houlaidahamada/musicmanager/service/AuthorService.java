@@ -46,8 +46,9 @@ public class AuthorService {
         Author author = new Author();
 
         author.setFullName(dto.getFullName());
-        //author.setBiography(dto.getBiography());
-
+        author.setEmail(dto.getEmail());
+        author.setRole(dto.getRole());
+        
         return authorMapper.toDto(authorRepository.save(author));
     }
 
