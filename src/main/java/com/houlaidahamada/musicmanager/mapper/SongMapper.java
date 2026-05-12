@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 public interface SongMapper {
     Song toEntity(SongCreateDto dto);
 
-    @Mapping(target = "authors", source = "song.authors")
-    @Mapping(target = "themes", source = "song.themes")
+    @Mapping(target = "authors", expression = "java(mapAuthorsToResponseDtos(song.getAuthors()))")
+    @Mapping(target = "themes", expression = "java(mapThemesToResponseDtos(song.getThemes()))")
     @Mapping(target = "lyrics", expression = "java(song.getLatestLyrics())")
-    @Mapping(target = "references", source = "song.references")
+    @Mapping(target = "references", expression = "java(mapReferencesToResponseDtos(song.getReferences()))")
     SongResponseDto toDto(Song song);
 
     @Mapping(target = "status", expression = "java(song.getStatus().name())")
@@ -99,21 +99,6 @@ public interface SongMapper {
         return dto;
     }
 
-    default LyricsResponseDto mapLyricsToResponseDto(Lyrics lyrics) {
-        if (lyrics == null) {
-            return null;
-        }
-        LyricsResponseDto dto = new LyricsResponseDto();
-        dto.setId(lyrics.getId());
-        dto.setContent(lyrics.getContent());
-        dto.setFormat(lyrics.getFormat());
-        dto.setLanguage(lyrics.getLanguage());
-        dto.setVersion(lyrics.getVersion());
-        dto.setCreatedAt(lyrics.getCreatedAt());
-        dto.setUpdatedAt(lyrics.getUpdatedAt());
-        return dto;
-    }
-
     default Set<ReferenceResponseDto> mapReferencesToResponseDtos(Set<Reference> references) {
         if (references == null) {
             return null;
@@ -133,6 +118,21 @@ public interface SongMapper {
         dto.setUrl(reference.getUrl());
         dto.setType(reference.getType());
         dto.setDescription(reference.getDescription());
+        return dto;
+    }
+
+    default LyricsResponseDto mapLyricsToResponseDto(Lyrics lyrics) {
+        if (lyrics == null) {
+            return null;
+        }
+        LyricsResponseDto dto = new LyricsResponseDto();
+        dto.setId(lyrics.getId());
+        dto.setContent(lyrics.getContent());
+        dto.setFormat(lyrics.getFormat());
+        dto.setLanguage(lyrics.getLanguage());
+        dto.setVersion(lyrics.getVersion());
+        dto.setCreatedAt(lyrics.getCreatedAt());
+        dto.setUpdatedAt(lyrics.getUpdatedAt());
         return dto;
     }
 }
