@@ -24,6 +24,7 @@ import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.AuthorRepository;
 import com.houlaidahamada.musicmanager.repository.LyricsRepository;
+import com.houlaidahamada.musicmanager.repository.ReferenceRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.ThemeRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
@@ -50,11 +51,12 @@ public class SongService {
     private final LyricsRepository lyricsRepository;
     private final ThemeRepository themeRepository;
     private final AuthorRepository authorRepository;
+    private final ReferenceRepository referenceRepository;
     private final SongMapper songMapper;
     private final LyricsMapper lyricsMapper;
     private final ReferenceMapper referenceMapper;
 
-    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, AuthorRepository authorRepository, SongMapper songMapper, LyricsMapper lyricsMapper, ReferenceMapper referenceMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, AuthorRepository authorRepository, ReferenceRepository referenceRepository, SongMapper songMapper, LyricsMapper lyricsMapper, ReferenceMapper referenceMapper) {
         this.songRepository = songRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
@@ -64,6 +66,7 @@ public class SongService {
         this.songMapper = songMapper;
         this.lyricsMapper = lyricsMapper;
         this.referenceMapper = referenceMapper;
+        this.referenceRepository = referenceRepository;
     }
 
     // -------------------------
@@ -353,5 +356,18 @@ public class SongService {
         return song.getReferences().stream()
                 .map(referenceMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public SongResponseDto deleteSongReference(Long id, Long refId) {
+        Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
+        Reference reference = referenceRepository.findById(refId).orElseThrow(() -> new RuntimeException("Reference not found"));
+
+        song.getReferences().remove(reference);
+        song.setUpdatedAt(LocalDateTime.now());
+
+        referenceRepository.delete(reference);
+        
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
     }
 }
