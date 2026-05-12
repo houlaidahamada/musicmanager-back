@@ -86,6 +86,11 @@ public class SongController {
     ) {
         return songService.compareLyricsVersions(id, baseVersion, compareVersion);
     }
+
+    @PostMapping("/{songId}/themes/{themeId}")
+    public SongResponseDto assignThemeToSong(@PathVariable Long songId, @PathVariable Long themeId) {
+        return songService.assignThemeToSong(songId, themeId);
+    }
     
     @DeleteMapping("/{id}")
     public void deleteSong(@PathVariable Long id){

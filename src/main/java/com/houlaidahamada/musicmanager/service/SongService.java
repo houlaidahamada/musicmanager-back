@@ -12,12 +12,14 @@ import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
 import com.houlaidahamada.musicmanager.entity.Lyrics;
 import com.houlaidahamada.musicmanager.entity.Song;
+import com.houlaidahamada.musicmanager.entity.Theme;
 import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.LyricsMapper;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
 import com.houlaidahamada.musicmanager.repository.LyricsRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
+import com.houlaidahamada.musicmanager.repository.ThemeRepository;
 import com.houlaidahamada.musicmanager.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,14 +40,16 @@ public class SongService {
     private final ArtistProfileRepository artistProfileRepository;
     private final UserRepository userRepository;
     private final LyricsRepository lyricsRepository;
+    private final ThemeRepository themeRepository;
     private final SongMapper songMapper;
     private final LyricsMapper lyricsMapper;
 
-    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
         this.songRepository = songRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
         this.lyricsRepository = lyricsRepository;
+        this.themeRepository = themeRepository;
         this.songMapper = songMapper;
         this.lyricsMapper = lyricsMapper;
     }
@@ -264,6 +268,17 @@ public class SongService {
                 }
                 break;
         }
+    }
+
+    public SongResponseDto assignThemeToSong(Long songId, Long themeId) {
+        Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        Theme theme = themeRepository.findById(themeId).orElseThrow(() -> new RuntimeException("Theme not found"));
+
+        song.getThemes().add(theme);
+        song.setUpdatedAt(LocalDateTime.now());
+
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
     }
 
     public void deleteSong(Long id) {
