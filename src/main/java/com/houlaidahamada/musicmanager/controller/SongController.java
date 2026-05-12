@@ -33,9 +33,10 @@ public class SongController {
     @GetMapping
     public Page<SongResponseDto> getSongs(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, size = 20) Pageable pageable,
-            @RequestParam(required = false) Song.SongStatus status
+            @RequestParam(required = false) Song.SongStatus status,
+            @RequestParam(required = false) Long themeId
     ) {
-        return songService.getSongs(pageable, status);
+        return songService.getSongs(pageable, status, themeId);
     }
 
     @GetMapping("/{id}")
