@@ -10,6 +10,7 @@ import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongStatusUpdateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
 import com.houlaidahamada.musicmanager.entity.ArtistProfile;
+import com.houlaidahamada.musicmanager.entity.Author;
 import com.houlaidahamada.musicmanager.entity.Lyrics;
 import com.houlaidahamada.musicmanager.entity.Song;
 import com.houlaidahamada.musicmanager.entity.Theme;
@@ -17,6 +18,7 @@ import com.houlaidahamada.musicmanager.entity.User;
 import com.houlaidahamada.musicmanager.mapper.LyricsMapper;
 import com.houlaidahamada.musicmanager.mapper.SongMapper;
 import com.houlaidahamada.musicmanager.repository.ArtistProfileRepository;
+import com.houlaidahamada.musicmanager.repository.AuthorRepository;
 import com.houlaidahamada.musicmanager.repository.LyricsRepository;
 import com.houlaidahamada.musicmanager.repository.SongRepository;
 import com.houlaidahamada.musicmanager.repository.ThemeRepository;
@@ -44,15 +46,17 @@ public class SongService {
     private final UserRepository userRepository;
     private final LyricsRepository lyricsRepository;
     private final ThemeRepository themeRepository;
+    private final AuthorRepository authorRepository;
     private final SongMapper songMapper;
     private final LyricsMapper lyricsMapper;
 
-    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
+    public SongService(SongRepository songRepository, ArtistProfileRepository artistProfileRepository, UserRepository userRepository, LyricsRepository lyricsRepository, ThemeRepository themeRepository, AuthorRepository authorRepository, SongMapper songMapper, LyricsMapper lyricsMapper) {
         this.songRepository = songRepository;
         this.artistProfileRepository = artistProfileRepository;
         this.userRepository = userRepository;
         this.lyricsRepository = lyricsRepository;
         this.themeRepository = themeRepository;
+        this.authorRepository = authorRepository;
         this.songMapper = songMapper;
         this.lyricsMapper = lyricsMapper;
     }
@@ -299,5 +303,16 @@ public class SongService {
     public void deleteSong(Long id) {
         Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
         songRepository.delete(song);
+    }
+
+    public SongResponseDto assignAuthorToSong(Long songId, Long authorId) {
+        Song song = songRepository.findById(songId).orElseThrow(() -> new RuntimeException("Song not found"));
+        Author author = authorRepository.findById(authorId).orElseThrow(() -> new RuntimeException("Author not found"));
+
+        song.getAuthors().add(author);
+        song.setUpdatedAt(LocalDateTime.now());
+
+        Song updatedSong = songRepository.save(song);
+        return songMapper.toDto(updatedSong);
     }
 }
