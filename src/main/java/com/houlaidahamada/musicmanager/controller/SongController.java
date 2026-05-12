@@ -91,6 +91,11 @@ public class SongController {
     public SongResponseDto assignThemeToSong(@PathVariable Long songId, @PathVariable Long themeId) {
         return songService.assignThemeToSong(songId, themeId);
     }
+
+    @DeleteMapping("/{songId}/themes/{themeId}")
+    public SongResponseDto removeThemeFromSong(@PathVariable Long songId, @PathVariable Long themeId) {
+        return songService.removeThemeFromSong(songId, themeId);
+    }
     
     @DeleteMapping("/{id}")
     public void deleteSong(@PathVariable Long id){
