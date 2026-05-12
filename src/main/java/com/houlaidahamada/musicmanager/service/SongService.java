@@ -347,4 +347,11 @@ public class SongService {
         songRepository.save(song);
         return referenceMapper.toDto(reference);
     }
+
+    public List<ReferenceResponseDto> getSongReferences(Long id) {
+        Song song = songRepository.findById(id).orElseThrow(() -> new RuntimeException("Song not found"));
+        return song.getReferences().stream()
+                .map(referenceMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

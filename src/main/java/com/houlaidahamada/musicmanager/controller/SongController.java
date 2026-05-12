@@ -90,6 +90,11 @@ public class SongController {
         return songService.compareLyricsVersions(id, baseVersion, compareVersion);
     }
 
+    @GetMapping("/{id}/references")
+    public List<ReferenceResponseDto> getSongReferences(@PathVariable Long id){
+        return songService.getSongReferences(id);
+    }
+
     @PostMapping("/{id}/references")
     public ReferenceResponseDto createSongReference(@PathVariable Long id, @Valid @RequestBody ReferenceCreateDto referenceCreateDto){
         return songService.createSongReference(id, referenceCreateDto);
