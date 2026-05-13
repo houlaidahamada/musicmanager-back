@@ -7,7 +7,6 @@ import com.houlaidahamada.musicmanager.dto.lyrics.LyricsUpdateDto;
 import com.houlaidahamada.musicmanager.dto.reference.ReferenceCreateDto;
 import com.houlaidahamada.musicmanager.dto.reference.ReferenceResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongCreateDto;
-import com.houlaidahamada.musicmanager.dto.song.SongCreateResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongResponseDto;
 import com.houlaidahamada.musicmanager.dto.song.SongStatusUpdateDto;
 import com.houlaidahamada.musicmanager.dto.song.SongUpdateDto;
@@ -47,7 +46,7 @@ public class SongController {
     }
 
     @PostMapping
-    public SongCreateResponseDto createSong(@RequestBody SongCreateDto songCreateDto){
+    public SongResponseDto createSong(@RequestBody SongCreateDto songCreateDto){
         return songService.createSong(songCreateDto);
     }
 

@@ -60,7 +60,7 @@ public class Song {
     private Set<Theme> themes = new HashSet<>();
 
     @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Reference> references = new HashSet<>();
+    private Set<SongReference> references = new HashSet<>();
 
     public Lyrics getLatestLyrics() {
         return lyrics.stream()

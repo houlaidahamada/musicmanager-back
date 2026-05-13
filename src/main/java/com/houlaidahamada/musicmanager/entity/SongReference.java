@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "references")
+@Table(name = "song_references")
 @Data
-public class Reference {
+public class SongReference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
