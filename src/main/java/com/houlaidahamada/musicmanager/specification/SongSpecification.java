@@ -10,14 +10,21 @@ public class SongSpecification {
 
     public static Specification<Song> hasStatus(Song.SongStatus status) {
         return (root, query, cb) ->
-                status == null ? null : cb.equal(root.get("status"), status);
+                status == null
+                        ? null
+                        : cb.equal(root.get("status"), status);
     }
 
     public static Specification<Song> hasThemeId(Long themeId) {
         return (root, query, cb) -> {
-            if (themeId == null) return null;
+            if (themeId == null) {
+                return null;
+            }
+
+            query.distinct(true);
 
             Join<Object, Object> themes = root.join("themes");
+
             return cb.equal(themes.get("id"), themeId);
         };
     }

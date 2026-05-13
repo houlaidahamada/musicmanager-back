@@ -2,7 +2,7 @@ package com.houlaidahamada.musicmanager.dto.reference;
 
 import org.hibernate.validator.constraints.URL;
 
-import com.houlaidahamada.musicmanager.entity.Reference;
+import com.houlaidahamada.musicmanager.entity.SongReference;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public class ReferenceCreateDto {
     private String url;
 
     @NotBlank
-    private Reference.ReferenceType type;
+    private SongReference.ReferenceType type;
 
     private String description;
 }

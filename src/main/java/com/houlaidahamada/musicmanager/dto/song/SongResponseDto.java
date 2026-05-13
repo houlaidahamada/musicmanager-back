@@ -14,8 +14,9 @@ public class SongResponseDto {
 
     private Long id;
     private String title;
+    private String artistName;
     private String description;
-    private Song.SongStatus status;
+    private String status;
     private Double duration;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
